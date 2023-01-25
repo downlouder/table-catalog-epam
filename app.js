@@ -82,15 +82,17 @@ selectQuery.addEventListener('change', function () {
         createTable(selectQuery.value);
     }
 })
-
 //TABLE
 table.hidden = true;
 appRoot.appendChild(table);
 
 function createTable(value) {
-    table.hidden = false;
     const regionInput = document.getElementById('region');
     const languageInput = document.getElementById('language');
+    let thName, thArea;
+    let nameSorting = '⇑';
+    let areaSorting = '⇕';
+    table.hidden = false;
     if (regionInput.checked) {
             createCells(externalService.getCountryListByRegion(value))
     } else if (languageInput.checked) {
@@ -105,68 +107,72 @@ function createTable(value) {
             }
             table.appendChild(tr);
         }
+        thName = document.querySelector('tr th:nth-child(1)');
+        thArea = document.querySelector('tr th:nth-child(5)');
+        thName.setAttribute('data-after1', nameSorting);
+        thArea.setAttribute('data-after2', areaSorting);
         for (let i = 0; i < choice.length; i++) {
             let tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${choice[i].name}</td>
-                <td>${choice[i].capital}</td>
-                <td>${choice[i].region}</td>
-                <td>${Object.values(choice[i].languages).join(', ')}</td>
-                <td>${choice[i].area}</td>
-                <td><img src="${choice[i].flagURL}" alt="Flag"></td>
+            <td>${choice[i].name}</td>
+            <td>${choice[i].capital}</td>
+            <td>${choice[i].region}</td>
+            <td>${Object.values(choice[i].languages).join(', ')}</td>
+            <td>${choice[i].area}</td>
+            <td><img src="${choice[i].flagURL}" alt="Flag"></td>
             `;
             table.appendChild(tr);
+        }
+    }
+    setArrows();
+    function setArrows() {
+        thName.addEventListener('click', () => {
+            if (thName.getAttribute('data-after1') === '⇑') {
+                nameSorting = '⇓';
+                thName.setAttribute('data-after1', nameSorting);
+            } else {
+                nameSorting = '⇑'
+                thName.setAttribute('data-after1', nameSorting);
+            }
+            areaSorting = '⇕'
+            thArea.setAttribute('data-after2', areaSorting);
+        });
+        thArea.addEventListener('click', () => {
+            if (thArea.getAttribute('data-after2') === '⇑') {
+                areaSorting = '⇓'
+                thArea.setAttribute('data-after2', areaSorting);
+            } else {
+                areaSorting = '⇑'
+                thArea.setAttribute('data-after2', areaSorting);
+            }
+            nameSorting = '⇕';
+            thName.setAttribute('data-after1', nameSorting);
+        });
+    }
+    function sorting() {
+        let changingChoice = choice;
+        if (nameSorting === '⇕') {
+            if (th5.getAttribute('data-after2') === '⇑') {
+                createSheets(changingChoice.sort(byField('area')));
+                console.log(changingChoice.sort(byField('area')));
+            } else {
+                createSheets(changingChoice.sort(byField('area')).reverse());
+            }
+        } else if (areaSorting === '⇕') {
+            if (th1.getAttribute('data-after1') === '⇑') {
+                createSheets(changingChoice.sort(byField('name')));
+            } else {
+                createSheets(changingChoice.sort(byField('name')).reverse())
+            }
+        }
+        function byField(field) {
+            return (a, b) => a[field] > b[field] ? 1 : -1;
         }
     }
 }
 
 // function createTable(value) {
-//     table.hidden = false;
-//     const regionInput = document.getElementById('region');
-//     const languageInput = document.getElementById('language');
-//     let th1, th5;
-//     createHeaderOfTable();
-//     setArrows();
-//     regionOrLanguage();
-//     function createHeaderOfTable() {
-//         table.innerHTML = '';
-//         for (let i = 0; i < 1; i++) {
-//             let tr = document.createElement('tr');
-//             for (let j = 0; j < arrayWords.length; j++) {
-//                 tr.innerHTML += `<th>${arrayWords[j]}</th>`;
-//             }
-//             table.appendChild(tr);
-//         }
-//         setArrows();
-//     }
-//     function regionOrLanguage() {
-//         if (regionInput.checked) {
-//             sorting(externalService.getCountryListByRegion(value))
-//         } else if (languageInput.checked) {
-//             sorting(externalService.getCountryListByLanguage(value));
-//         }
-//     }
-//     function createSheets(choice) {   
-//         // table.innerHTML = '';
-//         for (let i = 0; i < choice.length; i++) {
-//             let tr = document.createElement('tr');
-//             tr.innerHTML = `
-//                 <td>${choice[i].name}</td>
-//                 <td>${choice[i].capital}</td>
-//                 <td>${choice[i].region}</td>
-//                 <td>${Object.values(choice[i].languages).join(', ')}</td>
-//                 <td>${choice[i].area}</td>
-//                 <td><img src="${choice[i].flagURL}" alt="Flag"></td>
-//             `;
-//             table.appendChild(tr);
-//         }
-//     }
-//     //SORTING
 //     function setArrows() {
-//         th1 = document.querySelector('tr th:nth-child(1)');
-//         th5 = document.querySelector('tr th:nth-child(5)');
-//         th1.setAttribute('data-after1', '⇑');
-//         th5.setAttribute('data-after2', '⇕');
 //         th1.addEventListener('click', () => {
 //             if (th1.getAttribute('data-after1') === '⇑') {
 //                 th1.setAttribute('data-after1', '⇓');
@@ -185,23 +191,6 @@ function createTable(value) {
 //             th1.setAttribute('data-after1', '⇕');
 //             regionOrLanguage();
 //         });
-//     }
-//     function sorting(choice) {
-//         let changingChoice = choice;
-//         if (th1.getAttribute('data-after1') === '⇑') {
-//             createSheets(changingChoice.sort(byField('name')));
-//         } else {
-//             createSheets(changingChoice.sort(byField('name')).reverse())
-//         }
-//         // if (th5.getAttribute('data-after2') === '⇑') {
-//         //     createSheets(changingChoice.sort(byField('area')));
-//         //     console.log(changingChoice.sort(byField('area')));
-//         // } else {
-//         //     createSheets(changingChoice.sort(byField('area')).reverse());
-//         // }
-//         function byField(field) {
-//             return (a, b) => a[field] > b[field] ? 1 : -1;
-//         }
 //     }
 // }
 
