@@ -94,9 +94,11 @@ function createTable(value) {
     let areaSorting = '⇕';
     table.hidden = false;
     if (regionInput.checked) {
-            createCells(externalService.getCountryListByRegion(value))
+        sorting(externalService.getCountryListByRegion(value))
+        // createCells(externalService.getCountryListByRegion(value))
     } else if (languageInput.checked) {
-        createCells(externalService.getCountryListByLanguage(value));
+        sorting(externalService.getCountryListByLanguage(value));
+        // createCells(externalService.getCountryListByLanguage(value));
     }
     function createCells(choice) {
         table.innerHTML = '';
@@ -149,22 +151,23 @@ function createTable(value) {
             thName.setAttribute('data-after1', nameSorting);
         });
     }
-    function sorting() {
+    function sorting(choice) {
         let changingChoice = choice;
         if (nameSorting === '⇕') {
-            if (th5.getAttribute('data-after2') === '⇑') {
-                createSheets(changingChoice.sort(byField('area')));
+            if (areaSorting === '⇑') {
+                createCells(changingChoice.sort(byField('area')));
                 console.log(changingChoice.sort(byField('area')));
             } else {
-                createSheets(changingChoice.sort(byField('area')).reverse());
+                createCells(changingChoice.sort(byField('area')).reverse());
             }
         } else if (areaSorting === '⇕') {
-            if (th1.getAttribute('data-after1') === '⇑') {
-                createSheets(changingChoice.sort(byField('name')));
+            if (nameSorting === '⇑') {
+                createCells(changingChoice.sort(byField('name')));
             } else {
-                createSheets(changingChoice.sort(byField('name')).reverse())
+                createCells(changingChoice.sort(byField('name')).reverse())
             }
         }
+        // createCells(choice);
         function byField(field) {
             return (a, b) => a[field] > b[field] ? 1 : -1;
         }
