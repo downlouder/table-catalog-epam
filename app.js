@@ -89,16 +89,16 @@ appRoot.appendChild(table);
 function createTable(value) {
     const regionInput = document.getElementById('region');
     const languageInput = document.getElementById('language');
-    let thName, thArea;
+    let thName, thArea, choice;
     let nameSorting = '⇑';
     let areaSorting = '⇕';
     table.hidden = false;
     if (regionInput.checked) {
-        sorting(externalService.getCountryListByRegion(value))
-        // createCells(externalService.getCountryListByRegion(value))
+        choice = externalService.getCountryListByRegion(value);
+        sorting(choice);
     } else if (languageInput.checked) {
-        sorting(externalService.getCountryListByLanguage(value));
-        // createCells(externalService.getCountryListByLanguage(value));
+        choice = externalService.getCountryListByLanguage(value); 
+        sorting(choice);
     }
     function createCells(choice) {
         table.innerHTML = '';
@@ -125,30 +125,32 @@ function createTable(value) {
             `;
             table.appendChild(tr);
         }
+        setArrows();
     }
-    setArrows();
     function setArrows() {
         thName.addEventListener('click', () => {
             if (thName.getAttribute('data-after1') === '⇑') {
                 nameSorting = '⇓';
                 thName.setAttribute('data-after1', nameSorting);
             } else {
-                nameSorting = '⇑'
+                nameSorting = '⇑';
                 thName.setAttribute('data-after1', nameSorting);
             }
-            areaSorting = '⇕'
+            areaSorting = '⇕';
             thArea.setAttribute('data-after2', areaSorting);
+            sorting(choice);
         });
         thArea.addEventListener('click', () => {
             if (thArea.getAttribute('data-after2') === '⇑') {
-                areaSorting = '⇓'
+                areaSorting = '⇓';
                 thArea.setAttribute('data-after2', areaSorting);
             } else {
-                areaSorting = '⇑'
+                areaSorting = '⇑';
                 thArea.setAttribute('data-after2', areaSorting);
             }
             nameSorting = '⇕';
             thName.setAttribute('data-after1', nameSorting);
+            sorting(choice);
         });
     }
     function sorting(choice) {
@@ -156,7 +158,6 @@ function createTable(value) {
         if (nameSorting === '⇕') {
             if (areaSorting === '⇑') {
                 createCells(changingChoice.sort(byField('area')));
-                console.log(changingChoice.sort(byField('area')));
             } else {
                 createCells(changingChoice.sort(byField('area')).reverse());
             }
@@ -164,39 +165,14 @@ function createTable(value) {
             if (nameSorting === '⇑') {
                 createCells(changingChoice.sort(byField('name')));
             } else {
-                createCells(changingChoice.sort(byField('name')).reverse())
+                createCells(changingChoice.sort(byField('name')).reverse());
             }
         }
-        // createCells(choice);
         function byField(field) {
             return (a, b) => a[field] > b[field] ? 1 : -1;
         }
     }
 }
-
-// function createTable(value) {
-//     function setArrows() {
-//         th1.addEventListener('click', () => {
-//             if (th1.getAttribute('data-after1') === '⇑') {
-//                 th1.setAttribute('data-after1', '⇓');
-//             } else {
-//                 th1.setAttribute('data-after1', '⇑');
-//             }
-//             th5.setAttribute('data-after2', '⇕');
-//             regionOrLanguage();
-//         });
-//         th5.addEventListener('click', () => {
-//             if (th5.getAttribute('data-after2') === '⇑') {
-//                 th5.setAttribute('data-after2', '⇓');
-//             } else {
-//                 th5.setAttribute('data-after2', '⇑');
-//             }
-//             th1.setAttribute('data-after1', '⇕');
-//             regionOrLanguage();
-//         });
-//     }
-// }
-
 
 // list of all regions
 // console.log(externalService.getRegionsList());
